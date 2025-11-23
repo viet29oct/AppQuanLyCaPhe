@@ -1,0 +1,296 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
+package QLCF.view;
+
+import java.time.LocalDate;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import QLCF.DAO.NhanVienDao;
+import QLCF.model.NhanVien;
+import java.sql.Time;
+import java.sql.Date;
+import java.sql.SQLException;
+import QLCF.DAO.CaLamDAO;
+import QLCF.model.LichCaLam;
+
+
+/**
+ *
+ * @author Admin
+ */
+public class pnNhanVienHome extends javax.swing.JPanel {
+
+    private DefaultTableModel model, modelNhanVien, modelCa;
+    private NhanVienDao nvdao;
+    private String selectedMaNV = null;
+    private String selectedMaCa = null;
+    /**
+     * Creates new form pnNhanVIenHome
+     */
+    public pnNhanVienHome() {
+        initComponents();
+        nvdao = new NhanVienDao();
+        
+        modelNhanVien = (DefaultTableModel) tblNhanVien.getModel();
+        modelCa = (DefaultTableModel) tblLichCa.getModel();
+        tblNhanVien.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = tblNhanVien.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedMaNV = modelNhanVien.getValueAt(selectedRow, 0).toString(); 
+                    JOptionPane.showMessageDialog(this, "Đã chọn NV: " + selectedMaNV);
+                }
+            }
+        });
+
+        // Listener cho tableCa
+        tblLichCa.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = tblLichCa.getSelectedRow();
+                if (selectedRow != -1) {
+                    selectedMaCa = modelCa.getValueAt(selectedRow, 0).toString(); 
+                    JOptionPane.showMessageDialog(this, "Đã chọn Ca: " + selectedMaCa);
+                }
+            }
+        });
+
+        // Set Ca
+        btnSetCa.addActionListener(e -> {
+            if (selectedMaNV == null || selectedMaCa == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên và ca!");
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Set ca " + selectedMaCa + " cho NV " + selectedMaNV + "?", 
+                "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                
+                try {
+                    int maNV = Integer.parseInt(selectedMaNV);
+                    int maCa = Integer.parseInt(selectedMaCa);
+
+                    int rowCa = tblLichCa.getSelectedRow();
+                    Time batDau = Time.valueOf(modelCa.getValueAt(rowCa, 1).toString());
+                    Time ketThuc = Time.valueOf(modelCa.getValueAt(rowCa, 2).toString());
+
+                    Date ngay = Date.valueOf(LocalDate.now());
+
+                    CaLamDAO dao = new CaLamDAO();
+                    boolean success = dao.insertCaLam(maCa, ngay, batDau, ketThuc, maNV, "Active");
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(this, "Set ca thành công!");
+                        loadTableData();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Không thể set ca!");
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+                }
+            }
+
+            selectedMaNV = null;
+            selectedMaCa = null;
+            tblNhanVien.clearSelection();
+            tblLichCa.clearSelection();
+        });
+        loadTableData();
+        loadTableLichCa();
+    }
+    private void loadTableData() {
+        List<NhanVien> list = nvdao.getAllNhanVien();
+        model = (DefaultTableModel) tblNhanVien.getModel();
+        model.setRowCount(0);
+        
+        for (NhanVien nv : list) {
+            model.addRow(new Object[]{ 
+                nv.getId(),
+                nv.getTen(),
+                nv.getGioiTinh(),
+                nv.getSdt(),
+                nv.getNgaySinh(),
+                nv.getTaikhoanId(),
+                nv.getRole()
+            });
+        }
+    }
+    private void loadTableLichCa(){
+        CaLamDAO caLamDAO = new CaLamDAO();
+        List<LichCaLam> list = caLamDAO.getAllLichCaLam();
+        model = (DefaultTableModel) tblLichCa.getModel();
+        model.setRowCount(0);
+        
+        for (LichCaLam lcl : list) {
+            model.addRow(new Object[]{ 
+                lcl.getMaCa(),
+                lcl.getBatdau(),
+                lcl.getKetthuc()
+            });
+        }
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblNhanVien = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblLichCa = new javax.swing.JTable();
+        btnSetCa = new javax.swing.JButton();
+
+        jPanel1.setBackground(new java.awt.Color(222, 184, 135));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("Thông tin ca làm của nhân viên");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(329, 329, 329))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jLabel1)
+                .addContainerGap(36, Short.MAX_VALUE))
+        );
+
+        tblNhanVien.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Mã NV", "Họ tên", "Giới tính", "Số điện thoại", "Ngày sinh", "Id tài khoản"
+            }
+        ));
+        jScrollPane1.setViewportView(tblNhanVien);
+
+        jScrollPane2.setViewportView(jScrollPane1);
+
+        tblLichCa.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Ca làm", "Thời gian bắt đầu", "Thời gian kết thúc"
+            }
+        ));
+        jScrollPane3.setViewportView(tblLichCa);
+
+        btnSetCa.setBackground(new java.awt.Color(255, 153, 102));
+        btnSetCa.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnSetCa.setText("Set ca");
+        btnSetCa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSetCaActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 729, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnSetCa, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 716, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(172, 172, 172))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSetCa, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSetCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetCaActionPerformed
+        // TODO add your handling code here:
+        try {
+            int rowNV = tblNhanVien.getSelectedRow();
+            int rowCa = tblLichCa.getSelectedRow();
+
+            if (rowNV == -1 || rowCa == -1) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên và ca làm trước khi Set ca!");
+                return;
+            }
+
+            String maNVStr = tblNhanVien.getValueAt(rowNV, 0).toString();
+            int maNV = Integer.parseInt(maNVStr);
+
+            String maCaStr = tblLichCa.getValueAt(rowCa, 0).toString();
+            int maCa = Integer.parseInt(maCaStr);
+
+            Time thoiGianBatDau = Time.valueOf(tblLichCa.getValueAt(rowCa, 1).toString());
+            Time thoiGianKetThuc = Time.valueOf(tblLichCa.getValueAt(rowCa, 2).toString());
+
+            // lay ngay theo thoi gian thuc
+            Date ngayLam = Date.valueOf(LocalDate.now());
+
+            CaLamDAO caLamDAO =new CaLamDAO();
+            boolean success = caLamDAO.insertCaLam(maCa, ngayLam, thoiGianBatDau, thoiGianKetThuc, maNV, "Active");
+
+             if (success) {
+            JOptionPane.showMessageDialog(null, "Set ca thành công!");
+            } else {
+                JOptionPane.showMessageDialog(null, "Set ca thất bại!");
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi set ca: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Lỗi: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnSetCaActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSetCa;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable tblLichCa;
+    private javax.swing.JTable tblNhanVien;
+    // End of variables declaration//GEN-END:variables
+}
