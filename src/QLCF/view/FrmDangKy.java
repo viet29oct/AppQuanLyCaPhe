@@ -155,10 +155,7 @@ public class FrmDangKy extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Tài khoản này đã tồn tại!", "Hệ thống", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            if (adminKey.isEmpty()) {
-                role = "khach"; 
-            } else if (adminKey.equals("admin123")) {
+            else if (adminKey.equals("admin123")) {
                 role = "admin";
             } else {
                 JOptionPane.showMessageDialog(this, "Admin key không hợp lệ!", "Hệ thống", JOptionPane.ERROR_MESSAGE);
@@ -168,7 +165,7 @@ public class FrmDangKy extends javax.swing.JFrame {
             TaiKhoan tkMoi = new TaiKhoan(username, password, role);
             tkDao.addTaiKhoan(tkMoi);
 
-            JOptionPane.showMessageDialog(this, "Đăng ký " + (role.equals("admin") ? "admin" : "tài khoản khách") + " thành công!");
+            JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
 
             this.dispose();
             new FrmDangNhap().setVisible(true);
