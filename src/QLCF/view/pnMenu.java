@@ -181,6 +181,7 @@ public class pnMenu extends javax.swing.JPanel {
         }
 
         pnItemMenu item = new pnItemMenu();
+        item.setId(newMaSP); // sua o day 
         item.setTen(sp.getTenSP());
         item.setGia(sp.getGia());
         if (sp.getHinhanh() != null) {

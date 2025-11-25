@@ -106,6 +106,11 @@ public class FrmAdminMain extends javax.swing.JFrame {
         lbltime.setText("Time");
 
         btnThoat.setText("Thoát");
+        btnThoat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThoatActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnSideBarLayout = new javax.swing.GroupLayout(pnSideBar);
         pnSideBar.setLayout(pnSideBarLayout);
@@ -194,6 +199,13 @@ public class FrmAdminMain extends javax.swing.JFrame {
     private void BtnQLDTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnQLDTActionPerformed
         cardLayout.show(pnMain, "pnDTT");
     }//GEN-LAST:event_BtnQLDTActionPerformed
+
+    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
+        this.dispose();
+        FrmDangNhap LoginForm = new FrmDangNhap();
+        LoginForm.setVisible(true);
+        this.dispose(); 
+    }//GEN-LAST:event_btnThoatActionPerformed
 
     /**
      * @param args the command line arguments
